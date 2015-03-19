@@ -4,43 +4,79 @@
 #include <string>
 using namespace std;
 
+struct contact_t {
+	string firstName;
+	string lastName;
+};
+
+void listContacts() {
+	cout << "\nList contacts selected\n";
+}
+
 void addContact() {
-	cout << "\nAdd contact selected\n";
+	string * myptr, mystr;
+	contact_t contact;
+
+	cout << "\nEnter the contact's first name: ";
+	myptr = &contact.firstName;
+	getline(cin, mystr);
+	(stringstream)mystr >> *myptr;
+
+	cout << "\nEnter the contact's last name: ";
+	myptr = &contact.lastName;
+	getline(cin, mystr);
+	(stringstream)mystr >> *myptr;
+
+	cout << "\nContact '" << contact.firstName << " " << contact.lastName << "' created.\n\n";
 }
 void editContact() {
 	cout << "\nEdit contact selected\n";
 }
+
 void delContact() {
 	cout << "\nDelete contact selected\n";
 }
 
-int main() {
+int frontend() {
 	string mystr;
-	
+
 	int option;
 	int * myptr = &option;
 
-	cout << "Welcome.\n";
 	cout << "What service would you like to use?\n\n";
-	cout << "1. Add new contact\n";
-	cout << "2. Edit contact\n";
-	cout << "3. Delete contact\n\n";
+	cout << "1. List contacts\n";
+	cout << "2. Add new contact\n";
+	cout << "3. Edit contact\n";
+	cout << "4. Delete contact\n\n";
 
 	getline(cin, mystr);
 	(stringstream)mystr >> *myptr;
 	switch(*myptr) {
-		case 1:
-			addContact();
-			break;
-		case 2:
-			editContact();
-			break;
-		case 3:
-			delContact();
-			break;
-		default:
-			break;
+	case 1:
+		listContacts();
+		frontend();
+		break;
+	case 2:
+		addContact();
+		frontend();
+		break;
+	case 3:
+		editContact();
+		frontend();
+		break;
+	case 4:
+		delContact();
+		frontend();
+		break;
+	default:
+		return 0;
+		break;
 	}
+}
+
+int main() {
+	cout << "Welcome.\n";
+	frontend();
 
 	system("PAUSE");
 	return 0;
