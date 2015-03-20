@@ -9,7 +9,7 @@ struct contact_t {
 	string lastName;
 };
 
-void writeFile(contact_t contact) {
+void writefile(contact_t contact) {
 	ofstream myfile("contacts.bin");
 	if(myfile.is_open()) {
 		myfile << contact.firstName << " " << contact.lastName;
@@ -20,7 +20,7 @@ void writeFile(contact_t contact) {
 	}
 }
 
-void readFile() {
+void readfile() {
 	string line;
 	ifstream myfile("contacts.bin");
 	if(myfile.is_open()) {
@@ -36,20 +36,25 @@ void readFile() {
 
 void listContacts() {
 	cout << "\nList contacts selected\n";
-	readFile();
+	readfile();
 }
 
 void addContact() {
 	string * myptr, mystr;
-	contact_t *cptr, contact;
-	cptr = &contact;
+	contact_t contact;
 
 	cout << "\nEnter the contact's first name: ";
-	getline(cin, cptr->firstName);
+	myptr = &contact.firstName;
+	getline(cin, mystr);
+	(stringstream)mystr >> *myptr;
+
 	cout << "\nEnter the contact's last name: ";
-	getline(cin, cptr->lastName);
+	myptr = &contact.lastName;
+	getline(cin, mystr);
+	(stringstream)mystr >> *myptr;
+
 	cout << "\nContact '" << contact.firstName << " " << contact.lastName << "' created.\n\n";
-	writeFile(contact);
+	writefile(contact);
 }
 void editContact() {
 	cout << "\nEdit contact selected\n";
