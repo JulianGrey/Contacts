@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 using namespace std;
 
 struct contact_t {
@@ -9,23 +11,11 @@ struct contact_t {
 	string lastName;
 };
 
-void writefile(contact_t contact) {
+void writeFile(vector<contact_t> vcontact) {
 	ofstream myfile("contacts.bin");
 	if(myfile.is_open()) {
-		myfile << contact.firstName << " " << contact.lastName;
-		myfile.close();
-	}
-	else {
-		cout << "Unable to open file\n";
-	}
-}
-
-void readfile() {
-	string line;
-	ifstream myfile("contacts.bin");
-	if(myfile.is_open()) {
-		while(getline(myfile, line)) {
-			cout << line << '\n';
+		for(unsigned i = 0; i < vcontact.size(); i++) {
+			myfile << (vcontact)[i].firstName << " " << (vcontact)[i].lastName << '\n';
 		}
 		myfile.close();
 	}
@@ -34,27 +24,63 @@ void readfile() {
 	}
 }
 
-void listContacts() {
-	cout << "\nList contacts selected\n";
-	readfile();
+vector<contact_t> readFile() {
+	ifstream myfile("contacts.bin");
+	contact_t contact;
+	contact_t * pcontact;
+	string firstName, lastName;
+	string * pFirstName = &firstName;
+	string * pLastName = &lastName;
+	vector<contact_t> vcontact;
+	vector<contact_t> * pvcontact;
+
+	pcontact = &contact;
+	pvcontact = &vcontact;
+
+	if(myfile.is_open()) {
+		while(myfile >> *pFirstName >> *pLastName) {
+			(*pcontact).firstName = *pFirstName;
+			(*pcontact).lastName = *pLastName;
+			(*pvcontact).push_back(*pcontact);
+		}
+		myfile.close();
+	}
+	return vcontact;
 }
 
-void addContact() {
-	string * myptr, mystr;
+void listContacts() {
+	cout << "\nList contacts selected\n";
+	vector<contact_t> vcontact = readFile();
+	vector<contact_t> *pvcontact = &vcontact;
+	for(unsigned i = 0; i < (*pvcontact).size(); i++) {
+		cout << (*pvcontact)[i].firstName << " " << (*pvcontact)[i].lastName << '\n';
+	}
+}
+
+vector<contact_t> addContact(vector<contact_t> vcontact) {
+	string firstName, lastName, input;
+	string * myptr;
 	contact_t contact;
+	contact_t * pcontact;
 
 	cout << "\nEnter the contact's first name: ";
-	myptr = &contact.firstName;
-	getline(cin, mystr);
-	(stringstream)mystr >> *myptr;
+	myptr = &firstName;
+	getline(cin, input);
+	(stringstream)input >> *myptr;
 
 	cout << "\nEnter the contact's last name: ";
-	myptr = &contact.lastName;
-	getline(cin, mystr);
-	(stringstream)mystr >> *myptr;
+	myptr = &lastName;
+	getline(cin, input);
+	(stringstream)input >> *myptr;
+
+	pcontact = &contact;
+	(*pcontact).firstName = firstName;
+	(*pcontact).lastName = lastName;
+	vcontact.push_back(*pcontact);
+	writeFile(vcontact);
 
 	cout << "\nContact '" << contact.firstName << " " << contact.lastName << "' created.\n\n";
-	writefile(contact);
+	return vcontact;
 }
 void editContact() {
 	cout << "\nEdit contact selected\n";
@@ -64,7 +90,7 @@ void delContact() {
 	cout << "\nDelete contact selected\n";
 }
 
-int frontend() {
+int frontend(vector<contact_t> vcontact) {
 	string mystr;
 
 	int option;
@@ -81,19 +107,19 @@ int frontend() {
 	switch(*myptr) {
 	case 1:
 		listContacts();
-		frontend();
+		frontend(vcontact);
 		break;
 	case 2:
-		addContact();
-		frontend();
+		vcontact = addContact(vcontact);
+		frontend(vcontact);
 		break;
 	case 3:
 		editContact();
-		frontend();
+		frontend(vcontact);
 		break;
 	case 4:
 		delContact();
-		frontend();
+		frontend(vcontact);
 		break;
 	default:
 		return 0;
@@ -103,7 +129,15 @@ int frontend() {
 
 int main() {
 	cout << "Welcome.\n";
-	frontend();
+
+	vector<contact_t> vcontact = readFile();
+	vector<contact_t> * pvcontact = &vcontact;
+
+	for(unsigned i = 0; i < (*pvcontact).size(); i++) {
+		cout << (*pvcontact)[i].firstName << " " << (*pvcontact)[i].lastName << '\n';
+	}
+
+	frontend(vcontact);
 
 	system("PAUSE");
 	return 0;
