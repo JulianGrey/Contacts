@@ -1,6 +1,7 @@
 #include <algorithm>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <new>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -11,11 +12,11 @@ struct contact_t {
 	string lastName;
 };
 
-void writeFile(vector<contact_t> vcontact) {
+void writeFile(vector<contact_t> * vcontact) {
 	ofstream myfile("contacts.bin");
 	if(myfile.is_open()) {
-		for(unsigned i = 0; i < vcontact.size(); i++) {
-			myfile << (vcontact)[i].firstName << " " << (vcontact)[i].lastName << '\n';
+		for(unsigned i = 0; i < (*vcontact).size(); i++) {
+			myfile << (*vcontact)[i].firstName << " " << (*vcontact)[i].lastName << '\n';
 		}
 		myfile.close();
 	}
@@ -24,64 +25,65 @@ void writeFile(vector<contact_t> vcontact) {
 	}
 }
 
-vector<contact_t> readFile() {
+vector<contact_t> * readFile(vector<contact_t> * pvcontact) {
 	ifstream myfile("contacts.bin");
-	contact_t contact;
-	contact_t * pcontact;
-	string firstName, lastName;
-	string * pFirstName = &firstName;
-	string * pLastName = &lastName;
-	vector<contact_t> vcontact;
-	vector<contact_t> * pvcontact;
+	contact_t * contact = new contact_t;
+	string * firstName = new string;
+	string * lastName = new string;
 
-	pcontact = &contact;
-	pvcontact = &vcontact;
+	(*pvcontact).clear();
 
 	if(myfile.is_open()) {
-		while(myfile >> *pFirstName >> *pLastName) {
-			(*pcontact).firstName = *pFirstName;
-			(*pcontact).lastName = *pLastName;
-			(*pvcontact).push_back(*pcontact);
+		while(myfile >> *firstName >> *lastName) {
+			(*contact).firstName = *firstName;
+			(*contact).lastName = *lastName;
+			(*pvcontact).push_back(*contact);
 		}
 		myfile.close();
 	}
-	return vcontact;
+	delete contact;
+	delete firstName;
+	delete lastName;
+
+	return pvcontact;
 }
 
 void listContacts() {
 	cout << "\nList contacts selected\n";
-	vector<contact_t> vcontact = readFile();
-	vector<contact_t> *pvcontact = &vcontact;
+	vector<contact_t> * pvcontact = new vector<contact_t>;
+	pvcontact = readFile(pvcontact);
 	for(unsigned i = 0; i < (*pvcontact).size(); i++) {
 		cout << (*pvcontact)[i].firstName << " " << (*pvcontact)[i].lastName << '\n';
 	}
+	delete pvcontact;
 }
 
-vector<contact_t> addContact(vector<contact_t> vcontact) {
-	string firstName, lastName, input;
-	string * myptr;
-	contact_t contact;
-	contact_t * pcontact;
+vector<contact_t> * addContact(vector<contact_t> * vcontact) {
+	string * firstName = new string;
+	string * lastName = new string;
+
+	contact_t * contact = new contact_t;
 
 	cout << "\nEnter the contact's first name: ";
-	myptr = &firstName;
-	getline(cin, input);
-	(stringstream)input >> *myptr;
+	getline(cin, *firstName);
 
 	cout << "\nEnter the contact's last name: ";
-	myptr = &lastName;
-	getline(cin, input);
-	(stringstream)input >> *myptr;
+	getline(cin, *lastName);
 
-	pcontact = &contact;
-	(*pcontact).firstName = firstName;
-	(*pcontact).lastName = lastName;
-	vcontact.push_back(*pcontact);
+	(*contact).firstName = *firstName;
+	(*contact).lastName = *lastName;
+	(*vcontact).push_back(*contact);
 	writeFile(vcontact);
 
-	cout << "\nContact '" << contact.firstName << " " << contact.lastName << "' created.\n\n";
+	cout << "\nContact '" << (*contact).firstName << " " << (*contact).lastName << "' created.\n\n";
+
+	delete firstName;
+	delete lastName;
+	delete contact;
+
 	return vcontact;
 }
+
 void editContact() {
 	cout << "\nEdit contact selected\n";
 }
@@ -90,7 +92,7 @@ void delContact() {
 	cout << "\nDelete contact selected\n";
 }
 
-int frontend(vector<contact_t> vcontact) {
+int frontend(vector<contact_t> * vcontact) {
 	string mystr;
 
 	int option;
@@ -128,16 +130,12 @@ int frontend(vector<contact_t> vcontact) {
 }
 
 int main() {
+	vector<contact_t> * pvcontact = new vector<contact_t>;
+	pvcontact = readFile(pvcontact);
+
 	cout << "Welcome.\n";
-
-	vector<contact_t> vcontact = readFile();
-	vector<contact_t> * pvcontact = &vcontact;
-
-	for(unsigned i = 0; i < (*pvcontact).size(); i++) {
-		cout << (*pvcontact)[i].firstName << " " << (*pvcontact)[i].lastName << '\n';
-	}
-
-	frontend(vcontact);
+	frontend(pvcontact);
+	delete pvcontact;
 
 	system("PAUSE");
 	return 0;
