@@ -8,9 +8,6 @@
 #include <vector>
 using namespace std;
 
-#include <string>
-using namespace std;
-
 struct contact_t {
 	string firstName;
 	string lastName;
