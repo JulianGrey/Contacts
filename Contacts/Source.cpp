@@ -189,6 +189,7 @@ int frontend(vector<contact_t> * vcontact) {
 	cout << "3. Edit contact\n";
 	cout << "4. Delete contact\n";
 	cout << "5. Search contacts\n\n";
+	cout << "0. Exit\n\n";
 
 	getline(cin, *input);
 	(stringstream)*input >> *option;
@@ -215,6 +216,7 @@ int frontend(vector<contact_t> * vcontact) {
 		break;
 	case 5:
 		searchContacts();
+		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	default:
