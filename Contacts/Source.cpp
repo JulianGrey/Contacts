@@ -1,3 +1,4 @@
+#include "searchContacts.h"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -92,38 +93,132 @@ void delContact() {
 	cout << "\nDelete contact selected\n";
 }
 
-int frontend(vector<contact_t> * vcontact) {
-	string mystr;
+void searchContacts() {
+	ifstream myfile("contacts.bin");
 
-	int option;
-	int * myptr = &option;
+	bool * complete = new bool;
+	contact_t * contact = new contact_t;
+	string * firstName = new string;
+	string * lastName = new string;
+	string * input = new string;
+	vector<contact_t> * vcontact = new vector<contact_t>;
+	vector<string> * listNames = new vector<string>;
+	vector<contact_t> * matchedNames = new vector<contact_t>;
+
+	if(myfile.is_open()) {
+		while(myfile >> *firstName >> *lastName) {
+			(*contact).firstName = *firstName;
+			(*contact).lastName = *lastName;
+			(*vcontact).push_back(*contact);
+		}
+		myfile.close();
+	}
+	delete firstName;
+	delete lastName;
+
+	for(unsigned i = 0; i < (*vcontact).size(); i++) {
+		char * cstring = new char[(*vcontact)[i].firstName.size() + (*vcontact)[i].lastName.size() + 2];
+
+		(*listNames).push_back((*vcontact)[i].firstName + " " + (*vcontact)[i].lastName);
+		(*listNames)[i] = convertStrToChars((*listNames)[i], cstring);
+		(*listNames)[i] = convertStringToLower(cstring, (*listNames)[i].size());
+
+		delete cstring;
+	}
+
+	std::cout << "Enter search parameters: ";
+	getline(cin, *input);
+	char * cstring = new char[(*input).size() + 1];
+
+	cstring = convertStrToChars(input, cstring);
+	cstring = convertStringToLower(cstring, (*input).size());
+
+	for(unsigned i = 0; i < (*listNames).size(); i++) { // separate the names in the list
+		*complete = false;
+		for(unsigned j = 0; j < (*listNames)[i].size(); j++) { // separate the characters in the name
+			if(*complete) { break; };
+			for(unsigned k = 0; k < (*input).size(); k++) { // separate the characters in the search string
+				if(*complete) { break; }
+				if(cstring[k] != (*listNames)[i][j + k]) { break; }
+				else if(k != (*input).size() - 1) { // if we aren't checking the last letter
+					if(cstring[k] != (*listNames)[i][j + k]) { break; }
+				}
+				else {
+					if(cstring[k] == (*listNames)[i][j + k]) {
+						(*matchedNames).push_back((*vcontact)[i]);
+						*complete = true;
+					}
+				}
+			}
+		}
+	}
+	delete complete;
+	delete listNames;
+	delete[] cstring;
+	delete input;
+
+	if((*matchedNames).size() > 1) {
+		std::cout << "\n\n" << (*matchedNames).size() << " results found:\n\n";
+	}
+	else if((*matchedNames).size() == 1) {
+		std::cout << "\n\n" << (*matchedNames).size() << " result found:\n\n";
+	}
+	else {
+		std::cout << "\n\nNo results found.\n\n";
+	}
+
+	for(unsigned i = 0; i < (*matchedNames).size(); i++) {
+		std::cout << (*matchedNames)[i].firstName << " " << (*matchedNames)[i].lastName << '\n';
+	}
+	std::cout << "\n";
+	delete matchedNames;
+}
+
+void deleteFrontendInputs(string * input, int * option) {
+	delete input;
+	delete option;
+}
+
+int frontend(vector<contact_t> * vcontact) {
+	string * input = new string;
+	int * option = new int;
 
 	cout << "What service would you like to use?\n\n";
 	cout << "1. List contacts\n";
 	cout << "2. Add new contact\n";
 	cout << "3. Edit contact\n";
-	cout << "4. Delete contact\n\n";
+	cout << "4. Delete contact\n";
+	cout << "5. Search contacts\n\n";
 
-	getline(cin, mystr);
-	(stringstream)mystr >> *myptr;
-	switch(*myptr) {
+	getline(cin, *input);
+	(stringstream)*input >> *option;
+	switch(*option) {
 	case 1:
 		listContacts();
+		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	case 2:
 		vcontact = addContact(vcontact);
+		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	case 3:
 		editContact();
+		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	case 4:
 		delContact();
+		deleteFrontendInputs(input, option);
+		frontend(vcontact);
+		break;
+	case 5:
+		searchContacts();
 		frontend(vcontact);
 		break;
 	default:
+		deleteFrontendInputs(input, option);
 		return 0;
 		break;
 	}
