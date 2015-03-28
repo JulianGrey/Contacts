@@ -1,17 +1,54 @@
-#include "searchContacts.h"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <new>
 #include <sstream>
 #include <string>
 #include <vector>
 using namespace std;
 
+#include <string>
+using namespace std;
+
 struct contact_t {
 	string firstName;
 	string lastName;
 };
+
+char * convertStringToLower(char * cstring, int strSize) {
+	const int arraySize = 26;
+	char alphaUpper[arraySize] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+	char alphaLower[arraySize] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+	char * letter;
+
+	for(unsigned i = 0; i < strSize; i++) {
+		letter = static_cast<char *>(std::addressof(cstring[i]));
+		for(unsigned j = 0; j < arraySize; j++) {
+			if(*letter == alphaUpper[j]) {
+				*letter = alphaLower[j];
+			}
+		}
+	}
+	return cstring;
+}
+
+char * convertStrToChars(string * input, char * cstring) {
+	for(unsigned i = 0; i < (*input).size(); i++) {
+		cstring[i] = (*input)[i];
+	}
+	cstring[(*input).size()] = '\0';
+
+	return cstring;
+}
+
+char * convertStrToChars(string input, char * cstring) {
+	for(unsigned i = 0; i < input.size(); i++) {
+		cstring[i] = input[i];
+	}
+	cstring[input.size()] = '\0';
+	return cstring;
+}
 
 void writeFile(vector<contact_t> * vcontact) {
 	ofstream myfile("contacts.bin");
@@ -50,11 +87,15 @@ vector<contact_t> * readFile(vector<contact_t> * pvcontact) {
 }
 
 void listContacts() {
-	cout << "\nList contacts selected\n";
 	vector<contact_t> * pvcontact = new vector<contact_t>;
 	pvcontact = readFile(pvcontact);
-	for(unsigned i = 0; i < (*pvcontact).size(); i++) {
-		cout << (*pvcontact)[i].firstName << " " << (*pvcontact)[i].lastName << '\n';
+	if((*pvcontact).size() > 0) {
+		for(unsigned i = 0; i < (*pvcontact).size(); i++) {
+			cout << (*pvcontact)[i].firstName << " " << (*pvcontact)[i].lastName << '\n';
+		}
+	}
+	else {
+		cout << "No contacts found\n";
 	}
 	delete pvcontact;
 }
@@ -76,7 +117,7 @@ vector<contact_t> * addContact(vector<contact_t> * vcontact) {
 	(*vcontact).push_back(*contact);
 	writeFile(vcontact);
 
-	cout << "\nContact '" << (*contact).firstName << " " << (*contact).lastName << "' created.\n\n";
+	cout << "\nContact '" << (*contact).firstName << " " << (*contact).lastName << "' created.";
 
 	delete firstName;
 	delete lastName;
@@ -86,11 +127,11 @@ vector<contact_t> * addContact(vector<contact_t> * vcontact) {
 }
 
 void editContact() {
-	cout << "\nEdit contact selected\n";
+	cout << "Edit contact selected";
 }
 
 void delContact() {
-	cout << "\nDelete contact selected\n";
+	cout << "Delete contact selected";
 }
 
 void searchContacts() {
@@ -158,19 +199,18 @@ void searchContacts() {
 	delete input;
 
 	if((*matchedNames).size() > 1) {
-		std::cout << "\n\n" << (*matchedNames).size() << " results found:\n\n";
+		std::cout << "\n" << (*matchedNames).size() << " results found:\n\n";
 	}
 	else if((*matchedNames).size() == 1) {
-		std::cout << "\n\n" << (*matchedNames).size() << " result found:\n\n";
+		std::cout << "\n" << (*matchedNames).size() << " result found:\n\n";
 	}
 	else {
-		std::cout << "\n\nNo results found.\n\n";
+		std::cout << "\nNo results found.";
 	}
 
 	for(unsigned i = 0; i < (*matchedNames).size(); i++) {
 		std::cout << (*matchedNames)[i].firstName << " " << (*matchedNames)[i].lastName << '\n';
 	}
-	std::cout << "\n";
 	delete matchedNames;
 }
 
@@ -183,7 +223,7 @@ int frontend(vector<contact_t> * vcontact) {
 	string * input = new string;
 	int * option = new int;
 
-	cout << "What service would you like to use?\n\n";
+	cout << "\n\nWhat service would you like to use?\n\n";
 	cout << "1. List contacts\n";
 	cout << "2. Add new contact\n";
 	cout << "3. Edit contact\n";
@@ -193,6 +233,7 @@ int frontend(vector<contact_t> * vcontact) {
 
 	getline(cin, *input);
 	(stringstream)*input >> *option;
+	cout << "\n";
 	switch(*option) {
 	case 1:
 		listContacts();
@@ -230,7 +271,7 @@ int main() {
 	vector<contact_t> * pvcontact = new vector<contact_t>;
 	pvcontact = readFile(pvcontact);
 
-	cout << "Welcome.\n";
+	cout << "Welcome.";
 	frontend(pvcontact);
 	delete pvcontact;
 

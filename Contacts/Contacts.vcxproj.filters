@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="searchContacts.h">
+    <ClInclude Include="contact_t.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
