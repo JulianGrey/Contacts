@@ -27,15 +27,6 @@ char * convertStringToLower(char * cstring, int strSize) {
 	return cstring;
 }
 
-char * convertStrToChars(std::string * input, char * cstring) {
-	for(unsigned i = 0; i < (*input).size(); i++) {
-		cstring[i] = (*input)[i];
-	}
-	cstring[(*input).size()] = '\0';
-
-	return cstring;
-}
-
 char * convertStrToChars(std::string input, char * cstring) {
 	for(unsigned i = 0; i < input.size(); i++) {
 		cstring[i] = input[i];
@@ -105,7 +96,6 @@ std::vector<Contact> * addContact(std::vector<Contact> * vcontact) {
 	contact.setFirstName(*firstName);
 	contact.setLastName(*lastName);
 	(*vcontact).push_back(contact);
-	writeFile(vcontact);
 
 	std::cout << "\nContact '" << contact.getFullName() << "' created.";
 
@@ -143,7 +133,7 @@ void searchContacts(std::vector<Contact>* vcontact) {
 	getline(std::cin, *input);
 	char * cstring = new char[(*input).size() + 1];
 
-	cstring = convertStrToChars(input, cstring);
+	cstring = convertStrToChars(*input, cstring);
 	cstring = convertStringToLower(cstring, (*input).size());
 
 	for(size_t i = 0; i < (*listNames).size(); i++) { // separate the names in the list
@@ -186,7 +176,7 @@ void searchContacts(std::vector<Contact>* vcontact) {
 	delete matchedNames;
 }
 
-void frontend(std::vector<Contact> * vcontact, std::string* input, int* option, bool exit) {
+std::vector<Contact>* frontend(std::vector<Contact>* vcontact, std::string* input, int* option, bool exit) {
 	while(!exit) {
 		std::cout << "\n\nWhat service would you like to use?\n\n";
 		std::cout << "1. List contacts\n";
@@ -223,6 +213,7 @@ void frontend(std::vector<Contact> * vcontact, std::string* input, int* option, 
 				break;
 		}
 	}
+	return vcontact;
 }
 
 int main() {
@@ -239,7 +230,8 @@ int main() {
 	vcontact = readFile(vcontact);
 
 	std::cout << "Welcome.";
-	frontend(vcontact, inputPtr, optionPtr, exit);
+	vcontact = frontend(vcontact, inputPtr, optionPtr, exit);
+	writeFile(vcontact);
 	delete vcontact;
 
 	return 0;
