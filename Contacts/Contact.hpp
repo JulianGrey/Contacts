@@ -5,7 +5,6 @@ class Contact {
   private:
 	std::string firstName;
 	std::string lastName;
-	int strSize;
   public:
 	void setFirstName(std::string name) {
 		this->firstName = name;
