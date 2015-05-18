@@ -8,13 +8,13 @@
 #include <vector>
 #include "Contact.hpp"
 
-char * convertStringToLower(char * cstring, int strSize) {
+char* convertStringToLower(char* cstring, int strSize) {
 	const int arraySize = 26;
 	char alphaUpper[arraySize] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
 								  'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 	char alphaLower[arraySize] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 								  'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-	char * letter;
+	char* letter;
 
 	for(size_t i = 0; i < strSize; i++) {
 		letter = static_cast<char *>(std::addressof(cstring[i]));
@@ -27,7 +27,7 @@ char * convertStringToLower(char * cstring, int strSize) {
 	return cstring;
 }
 
-char * convertStrToChars(std::string input, char * cstring) {
+char* convertStrToChars(std::string input, char* cstring) {
 	for(unsigned i = 0; i < input.size(); i++) {
 		cstring[i] = input[i];
 	}
@@ -35,7 +35,7 @@ char * convertStrToChars(std::string input, char * cstring) {
 	return cstring;
 }
 
-void writeFile(std::vector<Contact> * vcontact) {
+void writeFile(std::vector<Contact>* vcontact) {
 	std::ofstream myfile("contacts.bin");
 	if(myfile.is_open()) {
 		for(size_t i = 0; i < (*vcontact).size(); i++) {
@@ -48,10 +48,10 @@ void writeFile(std::vector<Contact> * vcontact) {
 	}
 }
 
-std::vector<Contact> * readFile(std::vector<Contact> * pvcontact) {
+std::vector<Contact>* readFile(std::vector<Contact>* pvcontact) {
 	std::ifstream myfile("contacts.bin");
-	std::string * firstName = new std::string;
-	std::string * lastName = new std::string;
+	std::string* firstName = new std::string;
+	std::string* lastName = new std::string;
 
 	(*pvcontact).clear();
 
@@ -81,9 +81,9 @@ void listContacts(std::vector<Contact>* vcontact) {
 	}
 }
 
-std::vector<Contact> * addContact(std::vector<Contact> * vcontact) {
-	std::string * firstName = new std::string;
-	std::string * lastName = new std::string;
+std::vector<Contact>* addContact(std::vector<Contact>* vcontact) {
+	std::string* firstName = new std::string;
+	std::string* lastName = new std::string;
 
 	Contact contact;
 
@@ -114,10 +114,10 @@ void delContact() {
 }
 
 void searchContacts(std::vector<Contact>* vcontact) {
-	bool * complete = new bool;
-	std::string * input = new std::string;
-	std::vector<std::string> * listNames = new std::vector<std::string>;
-	std::vector<Contact> * matchedNames = new std::vector<Contact>;
+	bool* complete = new bool;
+	std::string* input = new std::string;
+	std::vector<std::string>* listNames = new std::vector<std::string>;
+	std::vector<Contact>* matchedNames = new std::vector<Contact>;
 
 	for(size_t i = 0; i < (*vcontact).size(); i++) {
 		char* cstring = new char[(*vcontact)[i].getNameLength() + 1];
@@ -131,7 +131,7 @@ void searchContacts(std::vector<Contact>* vcontact) {
 
 	std::cout << "Enter search parameters: ";
 	getline(std::cin, *input);
-	char * cstring = new char[(*input).size() + 1];
+	char* cstring = new char[(*input).size() + 1];
 
 	cstring = convertStrToChars(*input, cstring);
 	cstring = convertStringToLower(cstring, (*input).size());
