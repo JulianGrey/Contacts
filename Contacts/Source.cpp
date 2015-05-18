@@ -207,59 +207,60 @@ void searchContacts() {
 	delete matchedNames;
 }
 
-int frontend(std::vector<Contact> * vcontact) {
-	std::string input;
-	std::string* inputPtr;
-	int option;
-	int* optionPtr;
+void frontend(std::vector<Contact> * vcontact, std::string* input, int* option, bool exit) {
+	while(!exit) {
+		std::cout << "\n\nWhat service would you like to use?\n\n";
+		std::cout << "1. List contacts\n";
+		std::cout << "2. Add new contact\n";
+		std::cout << "3. Edit contact\n";
+		std::cout << "4. Delete contact\n";
+		std::cout << "5. Search contacts\n\n";
+		std::cout << "0. Exit\n\n";
 
-	inputPtr = &input;
-	optionPtr = &option;
-
-	std::cout << "\n\nWhat service would you like to use?\n\n";
-	std::cout << "1. List contacts\n";
-	std::cout << "2. Add new contact\n";
-	std::cout << "3. Edit contact\n";
-	std::cout << "4. Delete contact\n";
-	std::cout << "5. Search contacts\n\n";
-	std::cout << "0. Exit\n\n";
-
-	getline(std::cin, *inputPtr);
-	(std::stringstream)*inputPtr >> *optionPtr;
-	std::cout << "\n";
-	switch(*optionPtr) {
-	case 1:
-		listContacts();
-		frontend(vcontact);
-		break;
-	case 2:
-		vcontact = addContact(vcontact);
-		frontend(vcontact);
-		break;
-	case 3:
-		editContact();
-		frontend(vcontact);
-		break;
-	case 4:
-		delContact();
-		frontend(vcontact);
-		break;
-	case 5:
-		searchContacts();
-		frontend(vcontact);
-		break;
-	default:
-		return 0;
-		break;
+		getline(std::cin, *input);
+		(std::stringstream)*input >> *option;
+		std::cout << "\n";
+		switch(*option) {
+			case 1:
+				listContacts();
+				break;
+			case 2:
+				vcontact = addContact(vcontact);
+				break;
+			case 3:
+				editContact();
+				break;
+			case 4:
+				delContact();
+				break;
+			case 5:
+				searchContacts();
+				break;
+			case 0:
+				exit = true;
+				break;
+			default:
+				std::cout << "Invalid option\n\n";
+				break;
+		}
 	}
 }
 
 int main() {
+	std::string input;
+	std::string* inputPtr;
+	int option;
+	int* optionPtr;
+	bool exit = false;
+
+	inputPtr = &input;
+	optionPtr = &option;
+
 	std::vector<Contact> * pvcontact = new std::vector<Contact>;
 	pvcontact = readFile(pvcontact);
 
 	std::cout << "Welcome.";
-	frontend(pvcontact);
+	frontend(pvcontact, inputPtr, optionPtr, exit);
 	delete pvcontact;
 
 	return 0;
