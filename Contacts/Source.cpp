@@ -207,14 +207,14 @@ void searchContacts() {
 	delete matchedNames;
 }
 
-void deleteFrontendInputs(std::string * input, int * option) {
-	delete input;
-	delete option;
-}
-
 int frontend(std::vector<Contact> * vcontact) {
-	std::string * input = new std::string;
-	int * option = new int;
+	std::string input;
+	std::string* inputPtr;
+	int option;
+	int* optionPtr;
+
+	inputPtr = &input;
+	optionPtr = &option;
 
 	std::cout << "\n\nWhat service would you like to use?\n\n";
 	std::cout << "1. List contacts\n";
@@ -224,37 +224,31 @@ int frontend(std::vector<Contact> * vcontact) {
 	std::cout << "5. Search contacts\n\n";
 	std::cout << "0. Exit\n\n";
 
-	getline(std::cin, *input);
-	(std::stringstream)*input >> *option;
+	getline(std::cin, *inputPtr);
+	(std::stringstream)*inputPtr >> *optionPtr;
 	std::cout << "\n";
-	switch(*option) {
+	switch(*optionPtr) {
 	case 1:
 		listContacts();
-		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	case 2:
 		vcontact = addContact(vcontact);
-		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	case 3:
 		editContact();
-		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	case 4:
 		delContact();
-		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	case 5:
 		searchContacts();
-		deleteFrontendInputs(input, option);
 		frontend(vcontact);
 		break;
 	default:
-		deleteFrontendInputs(input, option);
 		return 0;
 		break;
 	}
