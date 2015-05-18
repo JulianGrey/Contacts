@@ -2,11 +2,11 @@
 #include <string>
 
 class Contact {
-private:
+  private:
 	std::string firstName;
 	std::string lastName;
 	int strSize;
-public:
+  public:
 	void setFirstName(std::string name) {
 		this->firstName = name;
 	}
