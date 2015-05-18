@@ -79,18 +79,15 @@ std::vector<Contact> * readFile(std::vector<Contact> * pvcontact) {
 	return pvcontact;
 }
 
-void listContacts() {
-	std::vector<Contact> * pvcontact = new std::vector<Contact>;
-	pvcontact = readFile(pvcontact);
-	if((*pvcontact).size() > 0) {
-		for(size_t i = 0; i < (*pvcontact).size(); i++) {
-			std::cout << (*pvcontact)[i].getFullName() << '\n';
+void listContacts(std::vector<Contact>* vcontact) {
+	if((*vcontact).size() > 0) {
+		for(size_t i = 0; i < (*vcontact).size(); i++) {
+			std::cout << (*vcontact)[i].getFullName() << '\n';
 		}
 	}
 	else {
 		std::cout << "No contacts found\n";
 	}
-	delete pvcontact;
 }
 
 std::vector<Contact> * addContact(std::vector<Contact> * vcontact) {
@@ -126,29 +123,11 @@ void delContact() {
 	std::cout << "Delete contact selected";
 }
 
-void searchContacts() {
-	std::ifstream myfile("contacts.bin");
-
+void searchContacts(std::vector<Contact>* vcontact) {
 	bool * complete = new bool;
-	std::string * firstName = new std::string;
-	std::string * lastName = new std::string;
 	std::string * input = new std::string;
-	std::vector<Contact> * vcontact = new std::vector<Contact>;
 	std::vector<std::string> * listNames = new std::vector<std::string>;
 	std::vector<Contact> * matchedNames = new std::vector<Contact>;
-
-	if(myfile.is_open()) {
-		// Populate vContact with names from file
-		while(myfile >> *firstName >> *lastName) {
-			Contact contact;
-			contact.setFirstName(*firstName);
-			contact.setLastName(*lastName);
-			(*vcontact).push_back(contact);
-		}
-		myfile.close();
-	}
-	delete firstName;
-	delete lastName;
 
 	for(size_t i = 0; i < (*vcontact).size(); i++) {
 		char* cstring = new char[(*vcontact)[i].getNameLength() + 1];
@@ -222,7 +201,7 @@ void frontend(std::vector<Contact> * vcontact, std::string* input, int* option, 
 		std::cout << "\n";
 		switch(*option) {
 			case 1:
-				listContacts();
+				listContacts(vcontact);
 				break;
 			case 2:
 				vcontact = addContact(vcontact);
@@ -234,7 +213,7 @@ void frontend(std::vector<Contact> * vcontact, std::string* input, int* option, 
 				delContact();
 				break;
 			case 5:
-				searchContacts();
+				searchContacts(vcontact);
 				break;
 			case 0:
 				exit = true;
@@ -256,12 +235,12 @@ int main() {
 	inputPtr = &input;
 	optionPtr = &option;
 
-	std::vector<Contact> * pvcontact = new std::vector<Contact>;
-	pvcontact = readFile(pvcontact);
+	std::vector<Contact> * vcontact = new std::vector<Contact>;
+	vcontact = readFile(vcontact);
 
 	std::cout << "Welcome.";
-	frontend(pvcontact, inputPtr, optionPtr, exit);
-	delete pvcontact;
+	frontend(vcontact, inputPtr, optionPtr, exit);
+	delete vcontact;
 
 	return 0;
 }
